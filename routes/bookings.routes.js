@@ -31,7 +31,8 @@ router.post("/", requireAuth, async (req, res) => {
     });
   }
 
-  const { data, error } = await supabase    .from("bookings")
+  const { data, error } = await supabase    
+    .from("bookings")
     .insert([
         { 
             user_id: req.user.id,

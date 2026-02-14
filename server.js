@@ -8,7 +8,11 @@ const adminRoutes = require("./routes/admin.routes");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000", // frontend URL
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.use("/api/bookings", bookingRoutes);
