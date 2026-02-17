@@ -84,7 +84,22 @@ router.patch("/:id/cancel", requireAuth, async (req, res) => {
   res.json({ message: "Booking canceled successfully.", data: booking });
 });
 
+router.patch("/:id/approve", requireAuth, requireAdmin, async (req, res) => {
+  const { id } = req.params;
 
+  const { data, error } = await supabase
+    .from("bookings")
+    .update({ status: "approved" })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error || !data) {
+    return res.status(400).json({ error: "Unable to approve booking" });
+  }
+
+  res.json({ message: "Booking approved successfully.", data });
+});
 
 
 module.exports = router;
