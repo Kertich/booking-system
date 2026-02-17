@@ -66,32 +66,22 @@ router.put("/:id", requireAuth, async (req, res) => {
 });
 
 // Delete booking
-router.delete("/:id", requireAuth, async (req, res) => {
+router.patch("/:id/cancel", requireAuth, async (req, res) => {
   const { id } = req.params;
 
   const { data: booking, error: fetchError } = await supabase
     .from("bookings")
-    .select("*")
+    .update({ status: "canceled" })
     .eq("id", id)
     .eq("user_id", req.user.id) // RLS ensures user can only delete their own bookings
+    .select()
     .single();
 
     if (fetchError || !booking) {
-    return res.status(404).json({ error: "Booking not  authorized." }); 
+    return res.status(400).json({ error: "Unable to cancel booking" }); 
   }
 
-  //Delete the booking
-  const { error: deleteError } = await supabase
-    .from("bookings")
-    .delete()
-    .eq("id", id)
-    .eq("user_id", req.user.id);
-
-  if (deleteError) {
-    return res.status(404).json({ error: deleteError.message });
-  }
-
-  res.json({ message: "Booking deleted successfully." });
+  res.json({ message: "Booking canceled successfully.", data: booking });
 });
 
 
