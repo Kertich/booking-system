@@ -62,4 +62,15 @@ router.get('/profile', authMiddleware, (req, res) => {
          user: req.user, });
 });
 
+router.get("/pending", requireAuth, requireAdmin, async (req, res) => {
+    const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('status', 'pending')
+        .order('created_at', { ascending: true });
+
+    if (error) return res.status(400).json({ error: error.message });
+    res.json(data);
+});
+
 module.exports = router; 
