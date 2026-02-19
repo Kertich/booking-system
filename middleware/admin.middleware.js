@@ -14,4 +14,4 @@ const requireAdmin = async (req, res, next) => {
     next();
 };
 
-module.exports = { requireAdmin };
+module.exports = requireAdmin;

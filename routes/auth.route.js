@@ -1,6 +1,7 @@
 const express = require('express');
 const supabase = require('../config/supabase');
-
+const requireAuth = require('../middleware/auth.middleware');
+const requireAdmin = require('../middleware/admin.middleware');
 const authMiddleware = require('../middleware/auth.middleware');
 const supabaseAdmin = require('../config/supabaseAdmin');
 
@@ -35,6 +36,27 @@ router.post('/register', async (req, res) => {
         userId: data.user.id,
     })
      });
+
+
+router.post('/signup', async (req, res) => {
+    const { email, password } = req.body;
+
+    const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+    });
+
+    if (error) {
+        return res.status(400).json({ error: error.message });
+    }
+
+    res.status(201).json({ 
+        message: "User registered successfully", 
+        user: data.user,
+    });
+});
+
+
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;

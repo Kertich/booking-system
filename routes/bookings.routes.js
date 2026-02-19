@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const requireAuth = require("../middleware/auth.middleware");
+const requireAdmin = require("../middleware/admin.middleware");
 const supabase = require("../config/supabase");
 
 // GET user's bookings
