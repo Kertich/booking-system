@@ -41,6 +41,7 @@ router.post('/register', async (req, res) => {
 router.post('/signup', async (req, res) => {
     const { email, password } = req.body;
 
+    // Create user in Supabase Auth
     const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -49,6 +50,29 @@ router.post('/signup', async (req, res) => {
     if (error) {
         return res.status(400).json({ error: error.message });
     }
+
+const user = data.user;
+
+if (!user) {
+    return res.status(400).json({ error: "User creation failed" });
+}
+
+//create profile row
+const { error: profileError } = await supabaseAdmin
+    .from('profiles')
+    .insert([
+        {
+            id: user.id, // Must match auth.users.id
+            role: 'user', // Default role
+        },
+    ]);
+
+    if (profileError) {
+        console.error("Profile creation error:", profileError);
+        return res.status(500).json({
+            error: "Failed to create user profile",
+        })
+    };
 
     res.status(201).json({ 
         message: "User registered successfully", 
